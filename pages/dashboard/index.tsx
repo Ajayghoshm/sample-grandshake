@@ -2,30 +2,14 @@
 
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
-import SkillCard from "./SkillCard";
-import clientPromise from "../../mongo";
+import BlogCard from "./BlogCard";
 import EditModal from "../../components/EditModal";
 import DeleteModal from "../../components/DeleteModal";
-// import { editBlog } from "../../api";
-
 import Modal from "react-modal";
-
-// const skillList = [
-//   {
-//     title: "First Blog",
-//     desc: "This is my first blogasdasdasdasdasada",
-//     id: "first_blog",
-//   },
-//   { title: "Second Blog", desc: "This is my first skill", id: "second_blog" },
-//   { title: "Third Blog", desc: "This is my first skill", id: "third_blog" },
-//   { title: "Four Blog", desc: "This is my first skill", id: "fourth_blog" },
-//   { title: "Five Blog", desc: "This is my first skill", id: "five_blog" },
-//   { title: "Five Blog", desc: "This is my first skill", id: "five_blog" },
-// ];
 
 const Dashboard = ({ skillList }) => {
 
-  const [skillListState, setSkillListState] = useState([]);
+  const [SkillListState, setSkillListState] = useState([]);
 
   useEffect(() => {
     setSkillListState(skillList);
@@ -35,7 +19,7 @@ const Dashboard = ({ skillList }) => {
   const [showDeleteModal, setShowDeletModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  const [selectedSkill, setSelectedSkill] = useState();
+  const [selectedSkill, setSlectedSkill] = useState();
 
   const customStyles = {
     content: {
@@ -51,24 +35,24 @@ const Dashboard = ({ skillList }) => {
   const onEditModalChange = (value) => {
     setShowEditModal((state) => !state);
     if (value) {
-      setSelectedSkill(value);
+      setSlectedSkill(value);
     } else {
-      setSelectedSkill(null);
+      setSlectedSkill(null);
     }
   };
 
   const onDeleteModalChange = (value) => {
     setShowDeletModal((state) => !state);
     if (value) {
-      setSelectedSkill(value);
+      setSlectedSkill(value);
     } else {
-      setSelectedSkill(null);
+      setSlectedSkill(null);
     }
   };
 
   const router = useRouter();
 
-  const onBlogDetails = (value) => {
+  const onSkillDetails = (value) => {
     router.push("/" + value);
   };
 
@@ -81,7 +65,7 @@ const Dashboard = ({ skillList }) => {
     setSkillListState(res);
   };
 
-  const saveModalDetails = async (title, desc, id) => {
+  const saveModalDetails = async (title, desc,imgSrc,video,multi, id) => {
     setShowEditModal(false);
     let res = await fetch("/api/skill", {
       method: "PUT",
@@ -89,14 +73,17 @@ const Dashboard = ({ skillList }) => {
         title: title,
         desc: desc,
         id: id,
+        imgSrc:imgSrc,
+        video:video,
+        multi:multi
       }),
     });
     res = await res.json();
     await updateBlogList();
-    await setSelectedSkill();
+    await setSlectedSkill();
   };
 
-  const onSkillDelete = async (id) => {
+  const onBlogDelete = async (id) => {
     setShowDeletModal(false);
     let res = await fetch("/api/skill", {
       method: "DELETE",
@@ -110,18 +97,21 @@ const Dashboard = ({ skillList }) => {
     setShowAddModal((state) => !state);
   };
 
-  const saveNewModalDetails = async (title, desc) => {
+  const saveNewModalDetails = async (title, desc,imgSrc,video,multi) => {
     onAddModalChange();
     let res = await fetch("/api/skill", {
       method: "POST",
       body: JSON.stringify({
         title: title,
         desc: desc,
+        imgSrc:imgSrc,
         id: title,
+        video:video,
+        multi:multi
       }),
     });
     await updateBlogList();
-    setSelectedSkill();
+    setSlectedSkill();
   };
   return (
     <>
@@ -129,7 +119,7 @@ const Dashboard = ({ skillList }) => {
         <div className="flex justify-center space-y-2 p-4 flex-col items-center">
           <h3 className="text-4xl font-bold px-2 ">Skill Dashboard</h3>
           <p className="text-gray-500">
-            This is the list of Skill from mongoDB Atlas
+            This is the list of Skill from my mongoDB Atlas
           </p>
         </div>
         <div className="flex justify-end text-blue-500 ">
@@ -140,14 +130,14 @@ const Dashboard = ({ skillList }) => {
             + Add New Skill
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {skillListState.map((item) => {
+        <div className="grid grid-cols-4 md:grid-cols-4 gap-4">
+          {SkillListState.map((item) => {
             return (
               <div>
-                <SkillCard
+                <BlogCard
                   key={item.id}
                   item={item}
-                  onReadMore={onBlogDetails}
+                  onReadMore={onSkillDetails}
                   onEditModalChange={onEditModalChange}
                   onDeleteModalChange={onDeleteModalChange}
                 />
@@ -189,7 +179,7 @@ const Dashboard = ({ skillList }) => {
           <DeleteModal
             onDeletModalChange={onDeleteModalChange}
             item={selectedSkill}
-            onSkillDelete={onSkillDelete}
+            onBlogDelete={onBlogDelete}
           />
         </Modal>
       </div>

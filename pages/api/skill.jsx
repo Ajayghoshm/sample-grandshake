@@ -6,38 +6,38 @@ export default async function handler(req, res) {
   // switch the methods
   switch (req.method) {
     case "GET": {
-      return getSkill(req, res);
+      return getBlogs(req, res);
     }
 
     case "POST": {
-      return addSkill(req, res);
+      return addBlog(req, res);
     }
 
     case "PUT": {
-      return updateSkill(req, res);
+      return updateBlog(req, res);
     }
 
     case "DELETE": {
-      return deleteSkill(req, res);
+      return deleteBlog(req, res);
     }
   }
 }
 
 // Getting all posts.
-async function getSkill(req, res) {
+async function getBlogs(req, res) {
   try {
     let { db } = await connectToDatabase();
     let id = req.query.id;
     console.debug("req", id);
-    let SkillCollection = await db.collection("Skill_list");
-    let SkillList;
+    let blogCollection = await db.collection("skills");
+    let blogList;
     if (id) {
-      SkillList = await SkillCollection.find({ id: id }).toArray();
+      blogList = await blogCollection.find({ id: id }).toArray();
     } else {
-      SkillList = await SkillCollection.find({}).toArray();
+      blogList = await blogCollection.find({}).toArray();
     }
-    SkillList = JSON.parse(JSON.stringify(SkillList));
-    return res.json(SkillList);
+    blogList = JSON.parse(JSON.stringify(blogList));
+    return res.json(blogList);
   } catch (error) {
     return res.json({
       message: new Error(error).message,
@@ -47,10 +47,10 @@ async function getSkill(req, res) {
 }
 
 // Adding a new post
-async function addSkill(req, res) {
+async function addBlog(req, res) {
   try {
     let { db } = await connectToDatabase();
-    await db.collection("Skill_list").insertOne(JSON.parse(req.body));
+    await db.collection("skills").insertOne(JSON.parse(req.body));
     return res.json({
       message: "Post added successfully",
       success: true,
@@ -64,13 +64,13 @@ async function addSkill(req, res) {
 }
 
 // Updating a post
-async function updateSkill(req, res) {
+async function updateBlog(req, res) {
   try {
     let { db } = await connectToDatabase();
-    const { title, desc, id } = JSON.parse(req.body);
+    const { title, desc, imgSrc, id, multi, video } = JSON.parse(req.body);
     console.debug("here", req.body, title);
 
-    await db.collection("Skill_list").updateOne(
+    await db.collection("skills").updateOne(
       {
         _id: ObjectId(id),
       },
@@ -78,12 +78,15 @@ async function updateSkill(req, res) {
         $set: {
           title: title,
           desc: desc,
+          imgSrc: imgSrc,
+          video: video,
+          multi: multi
         },
       },
     );
 
     return res.json({
-      message: "Skill updated successfully",
+      message: "blog updated successfully",
       success: true,
     });
   } catch (error) {
@@ -95,18 +98,18 @@ async function updateSkill(req, res) {
 }
 
 // deleting a post
-async function deleteSkill(req, res) {
+async function deleteBlog(req, res) {
   try {
     let { db } = await connectToDatabase();
 
     const { id } = JSON.parse(req.body);
     console.log("delete", id);
-    await db.collection("Skill_list").deleteOne({
+    await db.collection("skills").deleteOne({
       _id: new ObjectId(id),
     });
 
     return res.json({
-      message: "Skill deleted successfully",
+      message: "Blog deleted successfully",
       success: true,
     });
   } catch (error) {
@@ -141,14 +144,14 @@ async function deleteSkill(req, res) {
 //   }
 // }
 
-// export const editSkill = async (req, res) => {
+// export const editBlog = async (req, res) => {
 //   try {
 //     const client = await clientPromise;
 //     const db = client.db("globeia");
 //     const { id } = req.query;
 //     const { title, content } = req.body;
 
-//     const post = await db.collection("Skill_list").updateOne(
+//     const post = await db.collection("skills").updateOne(
 //       {
 //         _id: ObjectId(id),
 //       },

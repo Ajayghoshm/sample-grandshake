@@ -25,7 +25,7 @@ export async function getServerSideProps(ctx) {
   const slug = ctx.params.slug;
   console.debug("params", slug);
   let { DEV_URL } = process.env;
-  let response = await fetch(`${DEV_URL}/api/blog/?id=${slug}`);
+  let response = await fetch(`${DEV_URL}/api/skill/?id=${slug}`);
   let blogList = await response.json();
   console.debug("blog_list", blogList);
   return {

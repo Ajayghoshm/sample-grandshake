@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "pages/index.jsx", "pages/dashboard/index.jsx", "pages/dashboard/BlogCard.jsx", "pages/api/blog.jsx", "pages/[slug]/index.jsx", "components/EditModal.jsx", "components/DeleteModal.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
